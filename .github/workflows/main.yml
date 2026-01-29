@@ -1,0 +1,24 @@
+name: Security Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+# Permisos globales para que los resultados lleguen a la pestaña "Security"
+permissions:
+  security-events: write
+  contents: read
+  actions: read 
+
+jobs:
+  snyk-analysis:
+    uses: ./.github/workflows/snyk.yml
+    secrets: inherit
+
+  codeql-analysis:
+    uses: ./.github/workflows/codeql.yml
+
+  dast-analysis:
+    needs: [snyk-analysis, codeql-analysis]
+    uses: ./.github/workflows/dast-analysis.yml

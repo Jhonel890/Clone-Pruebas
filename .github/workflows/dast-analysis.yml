@@ -1,0 +1,13 @@
+name: DAST Analysis
+
+on:
+  workflow_call:
+
+jobs:
+  dast:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ZAP Scan
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: 'https://holdit-cloud-home.lovable.app' # Reemplaza con tu URL real
