@@ -12,17 +12,18 @@ jobs:
         uses: zaproxy/action-baseline@v0.13.0
         with:
           target: 'https://holdit-cloud-home.lovable.app'
-          # DEJAMOS VACÍO EL ARTEFACTO INTERNO: Esto evita el Error 400
+          # DESACTIVAR SUBIDA INTERNA: Esto elimina el error 400 Bad Request
           artifact_name: '' 
           fail_action: false
           issue_title: 'Security Report: DAST Analysis'
 
-      # SUBIDA MANUAL: Usamos el estándar de GitHub para mayor estabilidad
-      - name: Upload Security Report
+      - name: Upload Report Manually
+        # "if: always()" asegura que el paso corra aunque el escaneo encuentre fallos
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: 'reporteseguridad' # Nombre simple, sin caracteres especiales
+          # Nombre simple sin guiones ni caracteres especiales
+          name: 'reportezapfinal' 
           path: |
             report_html.html
             report_md.md
