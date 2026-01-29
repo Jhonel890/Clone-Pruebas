@@ -1,31 +1,37 @@
 name: Snyk Security Scan
 
 on:
-  workflow_call:
+  workflow_call: # Permite ser llamado por el pipeline principal (main.yml)
 
 jobs:
   snyk-scan:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 20 # Versión recomendada para 2026
 
-      - name: Install dependencies
+      - name: Instalar dependencias
+        # Se usa --legacy-peer-deps para evitar conflictos en proyectos React/TypeScript
         run: npm install --legacy-peer-deps
 
-      - name: Run Snyk
-        uses: snyk/actions/node@master
-        continue-on-error: true
+      - name: Ejecutar Snyk Test (SCA)
+        # "|| true" es vital para generar el reporte sarif incluso si hay vulnerabilidades
+        run: npx snyk test --sarif-file-output=snyk.sarif || true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --sarif-file-output=snyk.sarif
 
-      - name: Upload Snyk results
+      - name: Subir resultados a GitHub Security
+        # "if: always()" garantiza la carga de resultados para tu informe técnico
         if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
