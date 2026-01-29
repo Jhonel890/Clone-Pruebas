@@ -6,13 +6,20 @@ on:
 jobs:
   dast:
     runs-on: ubuntu-latest
+    name: Scan the web application
     steps:
       - name: ZAP Scan
-        uses: zaproxy/action-baseline@v0.13.0 # Actualizado para 2026
+        uses: zaproxy/action-baseline@v0.13.0
         with:
-          # IMPORTANTE: Verifica que esta URL cargue tu app en el navegador
+          # 1. VERIFICA ESTA URL: Debe ser la URL donde tu app está realmente publicada.
+          # Si usas Lovable, asegúrate de que el proyecto esté en "Share -> Publish".
           target: 'https://holdit-cloud-home.lovable.app' 
-          # Cambiamos el nombre para evitar el error 400 Bad Request
-          artifact_name: 'zap-report' 
-          # Permite que el pipeline siga aunque haya alertas (para el reporte)
-          fail_action: false
+          
+          # 2. NOMBRE DE ARTEFACTO: Usamos un nombre simple sin guiones para evitar el Error 400.
+          artifact_name: 'zapreport' 
+          
+          # 3. GESTIÓN DE FALLOS: Permite que el pipeline termine aunque haya alertas.
+          fail_action: false 
+          
+          # 4. REPORTES: Habilitamos la creación de un issue detallado.
+          issue_title: 'Security Report: DAST Analysis'
