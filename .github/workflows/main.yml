@@ -4,21 +4,27 @@ on:
   push:
     branches: [ "main" ]
   pull_request:
+    branches: [ "main" ]
 
-# Permisos globales para que los resultados lleguen a la pestaña "Security"
+# Permisos globales necesarios para que todas las herramientas reporten resultados
 permissions:
-  security-events: write
-  contents: read
-  actions: read 
+  security-events: write  # Permite subir resultados SARIF (Snyk y CodeQL)
+  contents: read          # Permite leer el código del repositorio
+  actions: read           # Permite la telemetría de las acciones
+  issues: write           # NECESARIO PARA DAST: Permite crear reportes de vulnerabilidades dinámicas
 
 jobs:
+  # Análisis de dependencias (SCA)
   snyk-analysis:
     uses: ./.github/workflows/snyk.yml
     secrets: inherit
 
+  # Análisis estático de código (SAST)
   codeql-analysis:
     uses: ./.github/workflows/codeql.yml
 
+  # Análisis dinámico (DAST)
+  # Se ejecuta solo si los análisis estáticos terminan correctamente
   dast-analysis:
     needs: [snyk-analysis, codeql-analysis]
     uses: ./.github/workflows/dast-analysis.yml
