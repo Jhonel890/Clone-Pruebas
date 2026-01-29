@@ -8,6 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ZAP Scan
-        uses: zaproxy/action-baseline@v0.12.0
+        uses: zaproxy/action-baseline@v0.13.0 # Actualizado para 2026
         with:
-          target: 'https://holdit-cloud-home.lovable.app' # Reemplaza con tu URL real
+          # IMPORTANTE: Verifica que esta URL cargue tu app en el navegador
+          target: 'https://holdit-cloud-home.lovable.app' 
+          # Cambiamos el nombre para evitar el error 400 Bad Request
+          artifact_name: 'zap-report' 
+          # Permite que el pipeline siga aunque haya alertas (para el reporte)
+          fail_action: false
