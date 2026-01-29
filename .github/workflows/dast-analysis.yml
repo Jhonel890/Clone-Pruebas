@@ -11,15 +11,18 @@ jobs:
       - name: ZAP Scan
         uses: zaproxy/action-baseline@v0.13.0
         with:
-          # 1. VERIFICA ESTA URL: Debe ser la URL donde tu app está realmente publicada.
-          # Si usas Lovable, asegúrate de que el proyecto esté en "Share -> Publish".
-          target: 'https://holdit-cloud-home.lovable.app' 
-          
-          # 2. NOMBRE DE ARTEFACTO: Usamos un nombre simple sin guiones para evitar el Error 400.
-          artifact_name: 'zapreport' 
-          
-          # 3. GESTIÓN DE FALLOS: Permite que el pipeline termine aunque haya alertas.
-          fail_action: false 
-          
-          # 4. REPORTES: Habilitamos la creación de un issue detallado.
+          target: 'https://holdit-cloud-home.lovable.app'
+          # Desactivamos el artefacto interno para evitar el Error 400
+          artifact_name: '' 
+          fail_action: false
           issue_title: 'Security Report: DAST Analysis'
+
+      # Usamos la acción oficial de subida (v4) para mayor compatibilidad
+      - name: Upload Report Manually
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'dast_security_report'
+          path: |
+            report_html.html
+            report_md.md
